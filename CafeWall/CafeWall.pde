@@ -8,14 +8,22 @@
  *
  */
 
+import controlP5.*;
+
+/* =Illusion */
+
 // illusion size
 int wallW = 600;
 int wallH = 400;
+final int minW = 100;
+final int minH = 100;
 final int maxW = 800;
 final int maxH = 800;
 int sqSize = 24;
+final int minSqSize = 4;
+final int maxSqSize = 96;
 int mortarSize = 2;
-int stride = sqSize + mortarSize;
+int stride;
 int rows, cols;
 int padCols;
 
@@ -37,35 +45,52 @@ int illW, illH;
 // centering
 int centerX, centerY;
 
+/* =Interface */
+ControlP5 cp5;
+
+controlP5.Slider2D dimsSlide2;
+controlP5.Slider sizeSlide;
+
 void setup() {
   // configure app window & drawing
-  size(maxW, maxH);
+  size(maxW, maxH + 100);
   noStroke();
   smooth();
 
-  // determine rows and columns count from wall & square size
-  rows = wallH / stride;
-  cols = wallW / stride;
-  padCols = shiftDelta*shiftPeriod / sqSize + 1; // need padding due to shifting
+  // create interface
+  int ifX = maxW / 2;
+  int ifY = maxH + 10;
+  cp5 = new ControlP5(this);
+  dimsSlide2 = cp5.addSlider2D("wallDims", minW, maxW, minH, maxH, wallW-minW, wallH-minH, ifX - 100, ifY, 75, 75);
+  dimsSlide2.setCaptionLabel("Wall Dims.");
+  sizeSlide = cp5.addSlider("sqSize", minSqSize, maxSqSize, sqSize, ifX, ifY+30, 60, 10);
+  sizeSlide.setCaptionLabel("Square Size");
+  sizeSlide.setNumberOfTickMarks(23); // increments of 4
+  sizeSlide.snapToTickMarks(true);
 
-  // create illusion
-  illW = cols*stride;
-  illH = rows*stride;
-  illusion = makeIllusion();
-
-  // center wall for display
-  centerX = (int) Math.round(maxW / 2.0 - (illW) / 2.0);
-  centerY = (int) Math.round(maxH / 2.0 - (illH) / 2.0);
+  // prepare & draw illusion
+  updateSize(sqSize);
+  updateDims(wallW, wallH);
+  makeIllusion();
 }
 
 void draw() {
+  // poll 2D slider, and update illusion on change
+  float[] dims = dimsSlide2.arrayValue();
+  if (dims[0] != wallW || dims[1] != wallH) {
+    updateDims(dims[0], dims[1]);
+    makeIllusion();
+  }
+
+  // display
   background(bgColor);
   image(illusion, centerX, centerY);
 }
 
-PGraphics makeIllusion() {
+// Draw the illusion w/ checkerboard, row shifting, and mortar background
+void makeIllusion() {
   // configure illusion drawing
-  PGraphics illusion = createGraphics(illW, illH, P2D);
+  illusion = createGraphics(illW, illH, P2D);
   illusion.noStroke();
   illusion.beginDraw();
 
@@ -88,6 +113,37 @@ PGraphics makeIllusion() {
     }
   }
   illusion.endDraw();
+}
 
-  return illusion;
+// update illusion dimensions
+void updateDims(float w, float h) {
+  wallW = (int) Math.round(w);
+  wallH = (int) Math.round(h);
+
+  updateSize(sqSize);
+
+  centerX = (int) Math.round(maxW / 2.0 - (illW) / 2.0);
+  centerY = (int) Math.round(maxH / 2.0 - (illH) / 2.0);
+}
+
+// update square size, rows, and columns
+void updateSize(int s) {
+  sqSize = s;
+  stride = sqSize + mortarSize;
+
+  // determine rows and columns count from wall & square size
+  rows = wallH / stride;
+  cols = wallW / stride;
+  padCols = shiftDelta*shiftPeriod / sqSize + 1; // need padding due to shifting
+
+  // determine clipped illusion size
+  illW = cols*stride;
+  illH = rows*stride;
+}
+
+// square size callback
+void sqSize(int thisSize) {
+  sqSize = thisSize;
+  updateSize(thisSize);
+  makeIllusion();
 }
