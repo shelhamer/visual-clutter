@@ -1,0 +1,14 @@
+Evan Shelhamer's Visual Clutter
+
+My visual side projects to complement whatever is kicking around my school
+due to computer science and psychology studies, computer vision and cognitive
+psychology laboratory work, or my idle curiosity.
+
+If it’s a computer vision algo, a visual illusion, or anything else
+appropriately filed under “Vision” I’ll include it here.
+
+Index
+
+Café Wall Illusion (CafeWall): Processing.org sketch for the Café Wall
+geometric optical illusion. Parallel lines on a checkerboard appear slanted
+due to displacements among rows.
