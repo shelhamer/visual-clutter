@@ -8,9 +8,9 @@
  *
  */
 
-import controlP5.*;
+import controlP5.*; // need to use version 0.5.4 for export
 
-/* =Illusion */
+// =Illusion
 
 // illusion size
 int wallW = 600;
@@ -45,7 +45,7 @@ int illW, illH;
 // centering
 int centerX, centerY;
 
-/* =Interface */
+// =Interface
 ControlP5 cp5;
 
 controlP5.Slider2D dimsSlide2;
