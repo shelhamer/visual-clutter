@@ -30,9 +30,12 @@ color offColor = color(0);
 color mortarColor = color(127);
 color bgColor = color(175, 33, 33);
 
+// illusion graphic (for clipping)
+PGraphics illusion;
+int illW, illH;
+
 // centering
 int centerX, centerY;
-int wallCenterX, wallCenterY;
 
 void setup() {
   // configure app window & drawing
@@ -45,26 +48,29 @@ void setup() {
   cols = wallW / stride;
   padCols = shiftDelta*shiftPeriod / sqSize + 1; // need padding due to shifting
 
+  // create graphics pad for drawing illusion
+  illW = cols*stride;
+  illH = rows*stride;
+  illusion = createGraphics(illW, illH, P2D);
+  illusion.noStroke();
+
   // center wall for display
-  centerX = (int) Math.round(maxW / 2.0 - wallW / 2.0);
-  centerY = (int) Math.round(maxH / 2.0 - wallH / 2.0);
-  wallCenterX = (int) Math.round((wallW - cols*stride) / 2.0);
-  wallCenterY = (int) Math.round((wallH - rows*stride) / 2.0);
+  centerX = (int) Math.round(maxW / 2.0 - (illW) / 2.0);
+  centerY = (int) Math.round(maxH / 2.0 - (illH) / 2.0);
 }
 
 void draw() {
   background(bgColor);
 
-  // fill in mortar
-  translate(centerX, centerY);
-  fill(mortarColor);
-  rect(0, 0, wallW, wallH);
-
   // configure illusion drawing
-  int shift = 0;
+  illusion.beginDraw();
+
+  // fill in mortar
+  illusion.fill(mortarColor);
+  illusion.rect(0, 0, wallW, wallH);
 
   // draw café wall squares
-  translate(wallCenterX, wallCenterY);
+  int shift = 0;
   for (int j = 0; j < rows; j++) {
     // displace each row for the illusion:
     // "staircase" the tiles by shifting by a fixed delta each row,
@@ -73,8 +79,11 @@ void draw() {
 
     // draw a row (including padding cols)
     for (int i = -padCols; i < cols; i++) {
-      fill(((i + j) % 2 == 0) ? onColor : offColor);
-      rect(i*stride + shift, j*stride, sqSize, sqSize);
+      illusion.fill(((i + j) % 2 == 0) ? onColor : offColor);
+      illusion.rect(i*stride + shift, j*stride, sqSize, sqSize);
     }
   }
+  illusion.endDraw();
+
+  image(illusion, centerX, centerY);
 }
