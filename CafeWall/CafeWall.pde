@@ -72,7 +72,7 @@ void draw() {
     shift += shiftDelta * Math.pow(-1, j / shiftPeriod);
 
     // draw a row (including padding cols)
-    for (int i = -padCols; i < cols+padCols; i++) {
+    for (int i = -padCols; i < cols; i++) {
       fill(((i + j) % 2 == 0) ? onColor : offColor);
       rect(i*stride + shift, j*stride, sqSize, sqSize);
     }
