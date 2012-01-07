@@ -48,11 +48,10 @@ void setup() {
   cols = wallW / stride;
   padCols = shiftDelta*shiftPeriod / sqSize + 1; // need padding due to shifting
 
-  // create graphics pad for drawing illusion
+  // create illusion
   illW = cols*stride;
   illH = rows*stride;
-  illusion = createGraphics(illW, illH, P2D);
-  illusion.noStroke();
+  illusion = makeIllusion();
 
   // center wall for display
   centerX = (int) Math.round(maxW / 2.0 - (illW) / 2.0);
@@ -61,8 +60,13 @@ void setup() {
 
 void draw() {
   background(bgColor);
+  image(illusion, centerX, centerY);
+}
 
+PGraphics makeIllusion() {
   // configure illusion drawing
+  PGraphics illusion = createGraphics(illW, illH, P2D);
+  illusion.noStroke();
   illusion.beginDraw();
 
   // fill in mortar
@@ -85,5 +89,5 @@ void draw() {
   }
   illusion.endDraw();
 
-  image(illusion, centerX, centerY);
+  return illusion;
 }
