@@ -28,8 +28,8 @@ int rows, cols;
 int padCols;
 
 // illusion shifting
-int shift;
-int shiftDelta = 8;
+float shiftFactor = .25; // proportion of square size to shift
+int shiftDelta = (int) Math.round(shiftFactor*sqSize);
 int shiftPeriod = 4;
 
 // illusion colors
@@ -49,7 +49,7 @@ int centerX, centerY;
 ControlP5 cp5;
 
 controlP5.Slider2D dimsSlide2;
-controlP5.Slider sizeSlide;
+controlP5.Slider sizeSlide, shiftSlide;
 
 void setup() {
   // configure app window & drawing
@@ -67,6 +67,8 @@ void setup() {
   sizeSlide.setCaptionLabel("Square Size");
   sizeSlide.setNumberOfTickMarks(23); // increments of 4
   sizeSlide.snapToTickMarks(true);
+  shiftSlide = cp5.addSlider("rowShift", 0, 1, shiftFactor, ifX, ifY+55, 60, 10);
+  shiftSlide.setCaptionLabel("Row Shift");
 
   // prepare & draw illusion
   updateSize(sqSize);
@@ -144,6 +146,15 @@ void updateSize(int s) {
 // square size callback
 void sqSize(int thisSize) {
   sqSize = thisSize;
+
   updateSize(thisSize);
+  makeIllusion();
+}
+
+// shift delta callback
+void rowShift(float shFactor) {
+  shiftFactor = shFactor;
+  shiftDelta = (int) Math.round(shiftFactor * sqSize);
+  updateSize(sqSize);
   makeIllusion();
 }
