@@ -37,6 +37,7 @@ color onColor = color(255);
 color offColor = color(0);
 color mortarColor = color(127);
 color bgColor = color(175, 33, 33);
+boolean drawMortar = true;
 
 // illusion graphic (for clipping)
 PGraphics illusion;
@@ -48,6 +49,7 @@ int centerX, centerY;
 // =Interface
 ControlP5 cp5;
 
+controlP5.CheckBox mortarCheck;
 controlP5.Slider2D dimsSlide2;
 controlP5.Slider sizeSlide, shiftSlide;
 
@@ -61,12 +63,18 @@ void setup() {
   int ifX = maxW / 2;
   int ifY = maxH + 10;
   cp5 = new ControlP5(this);
+  mortarCheck = cp5.addCheckBox("drawMortar", ifX, ifY+10);
+  mortarCheck.addItem("Mortar", 0);
+  mortarCheck.activate(0);
+
   dimsSlide2 = cp5.addSlider2D("wallDims", minW, maxW, minH, maxH, wallW-minW, wallH-minH, ifX - 100, ifY, 75, 75);
   dimsSlide2.setCaptionLabel("Wall Dims.");
+
   sizeSlide = cp5.addSlider("sqSize", minSqSize, maxSqSize, sqSize, ifX, ifY+30, 60, 10);
   sizeSlide.setCaptionLabel("Square Size");
   sizeSlide.setNumberOfTickMarks(23); // increments of 4
   sizeSlide.snapToTickMarks(true);
+
   shiftSlide = cp5.addSlider("rowShift", 0, 1, shiftFactor, ifX, ifY+55, 60, 10);
   shiftSlide.setCaptionLabel("Row Shift");
 
@@ -97,7 +105,10 @@ void makeIllusion() {
   illusion.beginDraw();
 
   // fill in mortar
-  illusion.fill(mortarColor);
+  if (drawMortar)
+    illusion.fill(mortarColor); // fill w/ intermediate brightness
+  else
+    illusion.fill(offColor); // fill w/ off, causing illusion to fail
   illusion.rect(0, 0, wallW, wallH);
 
   // draw café wall squares
@@ -141,6 +152,15 @@ void updateSize(int s) {
   // determine clipped illusion size
   illW = cols*stride;
   illH = rows*stride;
+}
+
+// mortar drawing control event callback for checkbox
+void controlEvent(ControlEvent ev) {
+  if (ev.isGroup()) { // checkbox(es) register as a group
+    // toggle mortar drawing
+    drawMortar = mortarCheck.getState(0);
+    makeIllusion();
+  }
 }
 
 // square size callback
