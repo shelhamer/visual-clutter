@@ -58,6 +58,7 @@ int onColor = color(255);
 int offColor = color(0);
 int mortarColor = color(127);
 int bgColor = color(175, 33, 33);
+boolean drawMortar = true;
 
 // illusion graphic (for clipping)
 PGraphics illusion;
@@ -69,12 +70,22 @@ int centerX, centerY;
 // =Interface
 ControlP5 cp5;
 
+controlP5.CheckBox mortarCheck;
 controlP5.Slider2D dimsSlide2;
 controlP5.Slider sizeSlide, shiftSlide;
+controlP5.Textarea textAbout;
+
+final String ABOUT_STR = "The Cafe Wall illusion is a geometric optical " +
+"illusion in which parallel grid lines appear crooked and sloping. The " +
+"effect varies with the staggering of the checkerboard rows and is reduced " +
+"when the intermediate grey grid lines are removed." +
+"\n\n" +
+"Experiment with the dimensions, checkerboard square size, border " +
+"(\"mortar\") presence, and the degree of row staggering with the controls.";
 
 public void setup() {
   // configure app window & drawing
-  size(800, 900);
+  size(maxW, maxH + 100);
   noStroke();
   smooth();
 
@@ -82,12 +93,21 @@ public void setup() {
   int ifX = maxW / 2;
   int ifY = maxH + 10;
   cp5 = new ControlP5(this);
+
+  textAbout = cp5.addTextarea("textAbout", ABOUT_STR, ifX-390, ifY, 275, 100);
+
+  mortarCheck = cp5.addCheckBox("drawMortar", ifX, ifY+10);
+  mortarCheck.addItem("Mortar", 0);
+  mortarCheck.activate(0);
+
   dimsSlide2 = cp5.addSlider2D("wallDims", minW, maxW, minH, maxH, wallW-minW, wallH-minH, ifX - 100, ifY, 75, 75);
   dimsSlide2.setCaptionLabel("Wall Dims.");
+
   sizeSlide = cp5.addSlider("sqSize", minSqSize, maxSqSize, sqSize, ifX, ifY+30, 60, 10);
   sizeSlide.setCaptionLabel("Square Size");
   sizeSlide.setNumberOfTickMarks(23); // increments of 4
   sizeSlide.snapToTickMarks(true);
+
   shiftSlide = cp5.addSlider("rowShift", 0, 1, shiftFactor, ifX, ifY+55, 60, 10);
   shiftSlide.setCaptionLabel("Row Shift");
 
@@ -118,7 +138,10 @@ public void makeIllusion() {
   illusion.beginDraw();
 
   // fill in mortar
-  illusion.fill(mortarColor);
+  if (drawMortar)
+    illusion.fill(mortarColor); // fill w/ intermediate brightness
+  else
+    illusion.fill(offColor); // fill w/ off, causing illusion to fail
   illusion.rect(0, 0, wallW, wallH);
 
   // draw caf\u00e9 wall squares
@@ -162,6 +185,15 @@ public void updateSize(int s) {
   // determine clipped illusion size
   illW = cols*stride;
   illH = rows*stride;
+}
+
+// mortar drawing control event callback for checkbox
+public void controlEvent(ControlEvent ev) {
+  if (ev.isGroup()) { // checkbox(es) register as a group
+    // toggle mortar drawing
+    drawMortar = mortarCheck.getState(0);
+    makeIllusion();
+  }
 }
 
 // square size callback
