@@ -65,6 +65,7 @@ final String ABOUT_STR = "The Cafe Wall illusion is a geometric optical " +
 void setup() {
   // configure app window & drawing
   size(maxW, maxH + 100);
+  frameRate(30);
   noStroke();
   smooth();
 
