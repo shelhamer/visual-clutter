@@ -1,0 +1,99 @@
+# Prokudin-Gorksi Photo Plate Registration
+
+## Results
+
+Alignments were evaluated for each set of plates for 2, 16, 64, and 256 bins.
+
+Image 00149
+pass: 2, 16, 64, 256
+fail:
+
+all alignments ate identical and appear to be correct.
+
+Image 00153
+pass: 16, 64, 256
+fail: 2
+
+2 is awful.
+the other three are identical and appear to be correct.
+
+Image 00163
+pass: 16, 64, 256
+fail: 2
+
+2 is jarring and shows "color shadows" on the houses.
+The other results are identical and appear to be correct.
+
+Image 00194
+pass: 2, 16, 64, 256
+fail:
+
+all alignments are identical and appear to be correct.
+
+Image 00398
+pass: 16, 64, 256
+fail: 2
+
+2 is out of alignment, but improved from original result.
+16, 64, and 256 are identical and appear to be correct.
+
+Image 00458
+pass: 16, 64, 256
+fail: 2
+
+16, 64, and 256 are identical and appear to be perfect.
+2 is -2, -1 (x, y) in the red plate.
+
+Image 00600
+pass: 16, 64
+fail: 2, 256
+
+16 & 64 appear to be correct and are identical.
+2 is quite bad, and is especially off in the green channel.
+256 is one horizontal pixel off on the green plate, but farther off the
+mark on the red plate.
+
+Image 01167
+pass: 2, 16, 64, 256
+fail:
+
+all alignments are identical and appear to be correct.
+
+## Color Mapping:
+
+The plates are ordered blue, green, red.
+
+This was determined by finding the mapping of plates with minimum KL Divergence
+w.r.t. an estimated color distribution for other (aligned) prokudin-gorski.
+
+I ran it on a couple of images and took a majority vote. I expect
+that this procedure would have chosen the correct mapping in all cases
+if I were to crop the test images (those provided to be aligned)
+
+## Discussion
+
+Registration by maximization of mutual information is able to align each color
+plate by grid search such that they look like a regular photograph
+when combined, provided that a suitable number of bins is chosen. Too few bins
+can lead to an oversimplified joint distribution without enough discrimination;
+too many bins lead to more uniform distribution with less information. However,
+the method works well overall and seems fairly robust to changes in binning.
+
+b = 16, b = 64 seem to be reasonable for this application as both achieved the
+correct alignment in each case.
+
+I am surprised that reducing the color channels to binary values (b = 2)
+worked in several cases. I interpret this to mean that although color channels
+of the same photograph (or from a close series of photographs) may vary greatly
+in values, they are highly statistically dependent. Given that they are all
+photographs of the same object in the visible spectrum, I suppose I could be
+less surprised, but working with two bins still impresses me.
+
+That 256 bins led to failure in one case was expected. As more values are
+considered, the co-occurence of any two values across images will tend to
+drop, and estimates will be more uniform and less informative.
+
+I am interested in evaluating how the number of bins affects registration
+done by gradient/coordinate descent, rather than exhaustive search. I expect
+that the lower bound on the number of bins needed to achieve a good alignment
+would increase to provide smoothness.
