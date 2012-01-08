@@ -52,6 +52,15 @@ ControlP5 cp5;
 controlP5.CheckBox mortarCheck;
 controlP5.Slider2D dimsSlide2;
 controlP5.Slider sizeSlide, shiftSlide;
+controlP5.Textarea textAbout;
+
+final String ABOUT_STR = "The Cafe Wall illusion is a geometric optical " +
+"illusion in which parallel grid lines appear crooked and sloping. The " +
+"effect varies with the staggering of the checkerboard rows and is reduced " +
+"when the intermediate grey grid lines are removed." +
+"\n\n" +
+"Experiment with the dimensions, checkerboard square size, border " +
+"(\"mortar\") presence, and the degree of row staggering with the controls.";
 
 void setup() {
   // configure app window & drawing
@@ -63,6 +72,9 @@ void setup() {
   int ifX = maxW / 2;
   int ifY = maxH + 10;
   cp5 = new ControlP5(this);
+
+  textAbout = cp5.addTextarea("textAbout", ABOUT_STR, ifX-390, ifY, 275, 100);
+
   mortarCheck = cp5.addCheckBox("drawMortar", ifX, ifY+10);
   mortarCheck.addItem("Mortar", 0);
   mortarCheck.activate(0);
