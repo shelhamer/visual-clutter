@@ -1,0 +1,76 @@
+# Congealing Binary Digits
+
+## The Congealing Algorithm
+
+Congealing is a computer vision method for the joint alignment of images
+developed by Erik Learned-Miller. In this particular instance it is used to
+align images of handwritten 3s and 5s from the MNIST digits data set.
+
+More information on congealing is available at Professor Learned-Miller’s
+[Congealing page](http://www.cs.umass.edu/~elm/congealing/).
+
+## Implementation Notes
+
+Input:
+I "binarized" the images in digits.mat so that all values in the images are
+from {0,1}. Makes calculation of stack probabilities trivial.
+
+Optimization:
+At each step, the sum of stack entropies minimizing single parameter
+transformation for each image is selected. That is, only one paramter per image
+is changed per iteration. The process ends when no transformation to any image
+improves (decreases) the sum of stack entropies.
+
+Parameter drift is prevented by re-centering each paramter s.t. it has
+zero mean.
+
+Parameter Deltas: more-or-less picked out of a hat, with a dash of
+intuition and past experience.
+
+Transformation: a backward mapping of image pixels is made by
+1.composing single parameter transformation matrices into an affine matrix
+2.taking its inverse for a backward, rather than forward mapping
+3.preceding the backward transformation with a transformation to the origin,
+  and following it with a transformation from the origin (to make rotation
+  and other transformations behave properly)
+4.filling in transformed pixels with their corresponding values from the
+  source image (w/ nearest neighbor interpolation)
+5.leaving a pixel off if it is mapped out-of-bounds in the source image
+
+Smoothing: a "grey" image is appended to the digit stack so that there is
+partial on & off at each pixel location, avoiding lock-in to certain
+transformations.
+
+## Results
+
+Test Threes:  sum of stack entropies 2850.7 -> 2026.6 in 30 iterations
+Train Threes: sum of stack entropies 2829.6 -> 1968.7 in 29 iterations
+Test Fives:   sum of stack entropies 2952.7 -> 2053.0 in 41 iterations
+Train Fives:  sum of stack entropies 2997.4 -> 2207.5 in 35 iterations
+
+Inspection of mean images of original digits and congealed digits shows that
+the congealed stack is more coherent, in that on pixels are more concentrated
+down the stacks resulting in higher mean image values and concentration.
+
+Refer to the figures/ dir to see the before/after mean images for the four
+sets of digits (results are saved as PNG images).
+
+## Discussion
+
+In each case congealing was able to reduce the total entropy of the image
+stacks, producing a more coherent mean image for the stacks. However, there are
+still outlying transformations that can be seen as clouds surrounding the digit
+on inspection. These could perhaps be reduced by a different choice of
+parameters or more exhaustive search strategy than single step coordinate
+descent.
+
+It is possible that "thickening" the stack by cloning imaages subject to
+random (small) affine transformations could smooth the coordinate descent
+landscape s.t. a lower minimum entropy is achieved for the stack (= a better
+joint alignment).
+
+Runtime could be optimized by
+1.estimating the pixel stack entropies by RADICAL (vasicek-derived estimation)
+  or otherwise
+2.calculating the backward transformation directly, rather than
+  composing the forward affine transformation and inverting it.
