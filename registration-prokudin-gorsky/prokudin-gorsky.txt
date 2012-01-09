@@ -1,0 +1,34 @@
+Prokudin-Gorsky Plate Registration & Color Channel Assignment
+
+This is an implementation and demonstration of registration by maximization of
+mutual information. This computer vision algorithm achieves registration across
+broad categories of imaging data and is particularly useful for medical imaging
+and sensor fusion (the combination of different modalities of sensor data, such
+as ultrasound and magnetic resonance). It is more robust than correlation
+because it depends on the distribution of image values over the values
+themselves.
+
+The following paper is an excellent explanation of the technique:
+
+Alignment by Maximization of Mutual Information
+Paul Viola and William M. Wells III
+International Journal of Computer Vision (IJCV), 24(2) pg 137–154, 1997
+http://people.csail.mit.edu/sw/papers/IJCV-97.pdf
+
+This technique is demonstrated on an input of historical note for photography,
+the color plates of Prokudin-Gorsky.
+
+Prokudin-Gorsky traveled Russia with the blessing of the Tsar to capture the
+country by color photography before color photography existed. No effective
+devices had been developed for taking or display color photos at the time, but
+he prepared for these innovations by capturing series of pictures with different
+color filters. His plates were later combined to yield the earliest color photos
+after the fact.
+
+This project takes misaligned prokudin-gorsky plates, registers them over
+translations by maximization of mutual information, and assigns each plate to a
+color channel by analyzing the KL-divergence of color distributions for
+different plate assignments and a training set of prokudin-gorsky photos.
+
+I developed this project in Professor Learned-Miller's graduate computer vision
+class.
