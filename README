@@ -9,6 +9,18 @@ appropriately filed under “Vision” I’ll include it here.
 
 Index
 
+Congealing: MATLAB implementation of a computer vision algorithm for joint
+alignment of a set of images. Alignment of handwritten digits is demonstrated
+and results are discussed. Algorithm invented by Erik Learned-Miller.
+
+Prokudin-Gorsky Registration: automatic creation of color photographs from
+separate color plates of historical interest. Prokudin-Gorsky took series of
+exposures on different plates with red, green, and blue filters to capture color
+photography across Russia before there ever was such a thing as color
+photography. Photos are created through registration of the plates by
+maximization of mutual information and colors are selected by minimum
+KL-divergence from a color distribution estimated on a training set.
+
 Café Wall Illusion (CafeWall): Processing.org sketch for the Café Wall
 geometric optical illusion. Parallel lines on a checkerboard appear slanted
 due to displacements among rows.
